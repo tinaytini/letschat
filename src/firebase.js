@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 
+
 export default initializeApp({
     apiKey: "AIzaSyCxpUXk9f-z45jixPLULvToq9RMYRvOg3o",
     authDomain: "letschat-f9f4c.firebaseapp.com",

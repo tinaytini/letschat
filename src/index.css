@@ -25,14 +25,45 @@ code {
 
 #login-card {
   position: relative;
-  top: calc(50vh - 144px);
-  left: calc(50vw - 210px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   padding-top: 36px;
   padding-bottom: 66px;
   width: 420px;
   text-align: center;
   background-color: white;
   border-radius: 22px;
+}
+.emailLogin {
+  display: grid;
+  grid-auto-flow: row;
+  row-gap: 10px;
+}
+
+label>input {
+  padding: 10px 20px;
+  width: 230px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  grid-auto-flow: column;
+}
+button {
+  cursor: pointer;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 8px;
+  border: none;
+  display: inline-block;
+  font-weight: 700;
+  background-color: #3b9879;
+  font-size: 18px;
+}
+.email-btns {
+  margin: 10px 10px 40px 0;
+}
+.email-btns>button {
+  margin: 0 10px 0 10px;
 }
 
 .login-button {
