@@ -1,23 +1,37 @@
-
-import { GoogleOutlined, FacebookOutlined } from '@ant-design/icons';
-import { getAuth, GoogleAuthProvider, FacebookAuthProvider, signInWithRedirect } from 'firebase/auth'
 import { useState } from 'react';
-import firebaseApp from "../firebase";
-const auth = getAuth(firebaseApp)
+import { GoogleOutlined, FacebookOutlined } from '@ant-design/icons';
+import { 
+    GoogleAuthProvider, 
+    FacebookAuthProvider, 
+    signInWithRedirect,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword
+} from 'firebase/auth'
+import { auth } from "../firebase";
+
 
 function Login() {
-    const [login, setLogin] = useState(false)
-    const [ registerEmail, setRegisterEmail ] = useState('');
-    const [ registerPassword, setRegisterPassword ] = useState('');
-    const [ loginEmail, setLoginEmail ] = useState('');
-    const [ loginPassword, setLoginPassword ] = useState('');
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-    const handleLoginBtn = () => {
-        setLogin(true)
+    const handleLoginBtn = async() => {
+        try {
+            const user = await signInWithEmailAndPassword(auth, email, password)
+            console.log(user)
+        } catch(error) {
+            console.log(error.message)
+        }
     }
-
-    const handleRegisterBtn = () => {
-        setLogin(false)
+    
+    const handleRegisterBtn = async() => {
+        try {
+            const user = await createUserWithEmailAndPassword(auth, email, password)
+            console.log(user)
+            setEmail("")
+            setPassword("")
+        } catch(error) {
+            console.log(error.message)
+        }
     }
 
     return (
@@ -26,44 +40,23 @@ function Login() {
                 <h2>Let's Chat</h2>
                 
                 <div className='emailLogin'>
-                    {login
-                        ?
-                        <>
-                            <h3>Login</h3>
-                            <label className='login'>
-                                <input 
-                                    type="email" 
-                                    placeholder='Email'
-                                    onChange={(e) => {setLoginEmail(e.target.value)}}
-                                />
-                            </label>
-                            <label className='login'>
-                                <input 
-                                    type="password" 
-                                    placeholder='Password'
-                                    onChange={(e) => {setLoginPassword(e.target.value)}}
-                                />
-                            </label>
-                        </>
-                        :
-                        <>
-                            <h3>Register</h3>
-                            <label className='register'>
-                                <input 
-                                    type="email" 
-                                    placeholder='Email' 
-                                    onChange={(e) => {setRegisterEmail(e.target.value)}}
-                                />
-                            </label>
-                            <label className='register'>
-                                <input 
-                                    type="password" 
-                                    placeholder='Password' 
-                                    onChange={(e) => {setRegisterPassword(e.target.value)}}
-                                />
-                            </label>
-                        </>
-                    }
+                    <h3>Login</h3>
+                    <label className='login'>
+                        <input 
+                            type="email" 
+                            placeholder='Email'
+                            value={email}
+                            onChange={(e) => {setEmail(e.target.value)}}
+                        />
+                    </label>
+                    <label className='login'>
+                        <input 
+                            type="password" 
+                            placeholder='Password'
+                            value={password}
+                            onChange={(e) => {setPassword(e.target.value)}}
+                        />
+                    </label>
 
 
                     <div className='email-btns'>
