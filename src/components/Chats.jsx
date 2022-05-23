@@ -6,6 +6,7 @@ import { addDoc, collection, doc, onSnapshot } from "firebase/firestore"
 import { auth, firestore } from "../firebase"
 import {useChatScroll, useDataLoader} from 'use-chat-scroll'
 
+
 function Chats() {
     const navigate = useNavigate()
     const [conversations, setConversations] = useState([])
@@ -15,6 +16,10 @@ function Chats() {
     const containerRef = useRef()
     const loader = useDataLoader(conversations, setConversations)
     useChatScroll(containerRef, conversations, loader)
+
+    
+
+
 
     useEffect(() => {
         const unsub = onSnapshot(collection(firestore, "messages"), (querySnapshot) => {
@@ -28,7 +33,7 @@ function Chats() {
                 setConversations(res);
             }
         });
-
+        
         return unsub
     })
     console.log("conversations", conversations)
@@ -65,7 +70,7 @@ function Chats() {
                 </button>
             </div>
             <div className="chatBlock" ref={containerRef}>
-                {conversations.map(({ createdAt, text, displayName, uid }) => (
+                {conversations.map(({ createdAt, text, displayName, uid, photoURL }) => (
                     <div key={createdAt} 
                         style={{
                         background: user.uid === uid ? "#07c160": '#fff',
@@ -73,12 +78,12 @@ function Chats() {
                         }}
                         className="userMessageWrap"
                     >  
-
-                    <>
+                    <div className="messageBox">
+                        <img id="userImg" src={photoURL} alt="" />
                         <div id="userName">{displayName}</div>
                         <div id="message">{text}</div>
-                        <div id="time">{createdAt}</div>
-                    </>
+                        
+                    </div>
                         
 
                     </div>
