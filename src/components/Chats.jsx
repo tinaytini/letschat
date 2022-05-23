@@ -1,17 +1,20 @@
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { addDoc, collection, doc, onSnapshot } from "firebase/firestore"
 import { auth, firestore } from "../firebase"
+import {useChatScroll, useDataLoader} from 'use-chat-scroll'
 
 function Chats() {
     const navigate = useNavigate()
-    const [ conversations, setConversations ] = useState([])
-    const [ value, setValue ] = useState([])
-    const [ user ] = useAuthState(auth)
+    const [conversations, setConversations] = useState([])
+    const [value, setValue] = useState([])
+    const [user] = useAuthState(auth)
 
-    console.log("user", user)
+    const containerRef = useRef()
+    const loader = useDataLoader(conversations, setConversations)
+    useChatScroll(containerRef, conversations, loader)
 
     useEffect(() => {
         const unsub = onSnapshot(collection(firestore, "messages"), (querySnapshot) => {
@@ -29,8 +32,8 @@ function Chats() {
         return unsub
     })
     console.log("conversations", conversations)
-    
-    const handleLogout = async() => {
+
+    const handleLogout = async () => {
         await auth.signOut()
         navigate('/')
     }
@@ -50,8 +53,8 @@ function Chats() {
             console.log("ERROR", error)
         }
     }
-    
-    return(
+
+    return (
         <div className="chatsPage">
             <div className="navbar">
                 <h1 className="logoTab">
@@ -61,18 +64,31 @@ function Chats() {
                     Logout
                 </button>
             </div>
-            <div className="chatBlock">
-                {conversations.map(({ createdAt, text, displayName }) => (
-                    <li key={createdAt}>{displayName} 
-                        <div>{text}</div>
-                    </li>
+            <div className="chatBlock" ref={containerRef}>
+                {conversations.map(({ createdAt, text, displayName, uid }) => (
+                    <div key={createdAt} 
+                        style={{
+                        background: user.uid === uid ? "#07c160": '#fff',
+                        marginLeft: user.uid === uid ? 'auto' : '10px',
+                        }}
+                        className="userMessageWrap"
+                    >  
+
+                    <>
+                        <div id="userName">{displayName}</div>
+                        <div id="message">{text}</div>
+                        <div id="time">{createdAt}</div>
+                    </>
+                        
+
+                    </div>
                 ))}
             </div>
             <label id="chatLabel">
-                <input type="text" className="chatInput" value={value} onChange={(e) => {setValue(e.target.value)}} />
+                <input type="text" className="chatInput" value={value} onChange={(e) => { setValue(e.target.value) }} />
                 <button className="send" onClick={sendMessage}>Send</button>
             </label>
-            
+
         </div>
     )
 }
