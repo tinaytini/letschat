@@ -8,6 +8,7 @@ import {
     signInWithEmailAndPassword
 } from 'firebase/auth'
 import { auth } from "../firebase";
+console.log(new FacebookAuthProvider())
 
 
 function Login() {
@@ -47,6 +48,7 @@ function Login() {
                             placeholder='Email'
                             value={email}
                             onChange={(e) => {setEmail(e.target.value)}}
+                            required
                         />
                     </label>
                     <label className='login'>
@@ -55,9 +57,9 @@ function Login() {
                             placeholder='Password'
                             value={password}
                             onChange={(e) => {setPassword(e.target.value)}}
+                            required
                         />
                     </label>
-
 
                     <div className='email-btns'>
                         <button onClick={handleLoginBtn} >Login</button>
