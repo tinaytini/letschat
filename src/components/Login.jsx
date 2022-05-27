@@ -8,7 +8,6 @@ import {
     signInWithEmailAndPassword
 } from 'firebase/auth'
 import { auth } from "../firebase";
-console.log(new FacebookAuthProvider())
 
 
 function Login() {

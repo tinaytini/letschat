@@ -16,13 +16,15 @@ export function AuthProvider({children}) {
         auth.onAuthStateChanged((user) => {
             setUser(user);
             setLoading(false);
-            if (user) navigate("/chats");
+
+            if (user) {
+                navigate("/chats", {replace: true});
+            } else {
+                navigate("/", {replace: true});
+            }
         })
     }, [user, navigate])
     
-
-    
-
     return (
         <AuthContext.Provider value={{user}} >
             {!loading && children}
