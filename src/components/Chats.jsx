@@ -1,32 +1,30 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
-import { useAuthState } from "react-firebase-hooks/auth"
-import { addDoc, collection, doc, onSnapshot } from "firebase/firestore"
+import { addDoc, collection, onSnapshot } from "firebase/firestore"
 import { auth, firestore } from "../firebase"
-import {useChatScroll, useDataLoader} from 'use-chat-scroll'
+import { useChatScroll, useDataLoader } from 'use-chat-scroll'
+import { useAuth } from '../contexts/AuthContext';
+import UserList from './UserList';
 
 
 function Chats() {
     const navigate = useNavigate()
     const [conversations, setConversations] = useState([])
     const [value, setValue] = useState([])
-    const [user] = useAuthState(auth)
+    const { user } = useAuth();
 
     const containerRef = useRef()
     const loader = useDataLoader(conversations, setConversations)
     useChatScroll(containerRef, conversations, loader)
 
-    
-
-
-
+    console.log(useAuth())
     useEffect(() => {
-        const unsub = onSnapshot(collection(firestore, "messages"), (querySnapshot) => {
-            const res = [];
-            querySnapshot.forEach((doc) => {
-                res.push(doc.data());
-            });
+        const unsub = onSnapshot(collection(firestore, "messages"), (docs) => {
+            const res = []
+            docs.forEach(message => {
+                res.push(message.data())
+            })
 
             if (res.length > conversations.length) {
                 res.sort((a, b) => new Date(a.createdAt.seconds) - new Date(b.createdAt.seconds))
@@ -35,8 +33,7 @@ function Chats() {
         });
         
         return unsub
-    })
-    console.log("conversations", conversations)
+    }, [])
 
     const handleLogout = async () => {
         await auth.signOut()
@@ -69,6 +66,7 @@ function Chats() {
                     Logout
                 </button>
             </div>
+            <UserList/>
             <div className="chatBlock" ref={containerRef}>
                 {conversations.map(({ createdAt, text, displayName, uid, photoURL }) => (
                     <div key={createdAt} 
@@ -79,7 +77,7 @@ function Chats() {
                         className="userMessageWrap"
                     >  
                     <div className="messageBox">
-                        <img id="userImg" src={photoURL} alt="" />
+                        <img id="userImg" src={photoURL ? photoURL : 'https://picsum.photos/50'} alt="" />
                         <div id="userName">{displayName}</div>
                         <div id="message">{text}</div>
                         
