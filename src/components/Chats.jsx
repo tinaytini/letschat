@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { addDoc, collection, onSnapshot } from "firebase/firestore"
-import { auth, firestore } from "../firebase"
+import { firestore } from "../firebase"
 import { useChatScroll, useDataLoader } from 'use-chat-scroll'
 import { useAuth } from '../contexts/AuthContext';
 import UserProfile from './UserProfile'
@@ -18,7 +18,6 @@ function Chats() {
     const [conversations, setConversations] = useState([])
     const [value, setValue] = useState([])
     const { user } = useAuth();
-
     const containerRef = useRef()
     const loader = useDataLoader(conversations, setConversations)
     useChatScroll(containerRef, conversations, loader)
@@ -37,12 +36,7 @@ function Chats() {
         });
 
         return unsub
-    }, [conversations])
-
-    const handleLogout = async () => {
-        await auth.signOut()
-        navigate('/')
-    }
+    }, [])
 
     const sendMessage = async () => {
         try {
@@ -53,7 +47,6 @@ function Chats() {
                 text: value,
                 createdAt: new Date(),
             })
-            console.log(docRef)
             setValue('')
         } catch (error) {
             console.log("ERROR", error)
@@ -77,16 +70,7 @@ function Chats() {
 
 
     return (
-
         <div className="chatsPage">
-            <div className="navbar">
-                <h1 className="logoTab">
-                    Letschat
-                </h1>
-                <button onClick={handleLogout} className="logoutTab">
-                    Logout
-                </button>
-            </div>
             <div className="chatBlock" ref={containerRef}>
                 {conversations.map(({ createdAt, text, displayName, uid, photoURL }) => (
                     <div key={createdAt}
@@ -102,21 +86,34 @@ function Chats() {
                             <div id="message">{text}</div>
                         </div>
                     </div>
-                    
+
                 ))}
-                
-                <UserProfile 
-                    photoURL={modal.photoURL} 
-                    displayName={modal.displayName} 
-                    modal={modal.open} 
+
+                <UserProfile
+                    photoURL={modal.photoURL}
+                    displayName={modal.displayName}
+                    modal={modal.open}
                     onClose={closeModal}
                 />
             </div>
-            <label id="chatLabel">
-                <input type="text" className="chatInput" value={value} onChange={(e) => { setValue(e.target.value) }} />
-                <button className="send" onClick={sendMessage}>Send</button>
+            <label className="chatLabel">
+                <input
+                    type="text"
+                    className="chatInput"
+                    value={value}
+                    onChange={(e) => {
+                        setValue(e.target.value)
+                    }}
+                />
+                <button
+                    disabled={!value.length}
+                    className="send" 
+                    onClick={sendMessage}
+                >
+                Send
+                </button>
             </label>
-            
+
         </div>
     )
 }

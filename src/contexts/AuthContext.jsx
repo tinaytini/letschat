@@ -17,9 +17,7 @@ export function AuthProvider({children}) {
             setUser(user);
             setLoading(false);
 
-            if (user) {
-                navigate("/chats", {replace: true});
-            } else {
+            if (!user) {
                 navigate("/", {replace: true});
             }
         })
