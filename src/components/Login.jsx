@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GoogleOutlined, FacebookOutlined } from '@ant-design/icons';
 import { 
     GoogleAuthProvider, 
@@ -8,11 +9,20 @@ import {
     signInWithEmailAndPassword
 } from 'firebase/auth'
 import { auth } from "../firebase";
+import { useAuth } from "../contexts/AuthContext"
 
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const { user } = useAuth()
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (user) {
+            navigate("/chats", {replace: true});
+        } 
+    }, [user])
 
     const handleLoginBtn = async() => {
         try {
