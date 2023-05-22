@@ -1,6 +1,6 @@
 
-import { useState, useEffect, useRef } from "react"
-import { useNavigate } from "react-router-dom"
+import React, { useState, useEffect, useRef } from "react"
+// import { useNavigate } from "react-router-dom"
 import { addDoc, collection, onSnapshot } from "firebase/firestore"
 import { firestore } from "../firebase"
 import { useChatScroll, useDataLoader } from 'use-chat-scroll'
@@ -9,7 +9,7 @@ import UserProfile from './UserProfile'
 
 
 function Chats() {
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
     const [modal, setModal] = useState({
         open: false,
         displayName: "",
